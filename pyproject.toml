@@ -1,0 +1,23 @@
+[project]
+name = "tasktracker"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "AntonyukEvgeniy",email = "evgeniiantonyuk@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "django (>=5.2.2,<6.0.0)",
+    "djangorestframework (>=3.16.0,<4.0.0)",
+    "environs (>=14.2.0,<15.0.0)",
+    "black (>=25.1.0,<26.0.0)",
+    "flake8 (>=7.2.0,<8.0.0)",
+    "isort (>=6.0.1,<7.0.0)",
+    "drf-yasg (>=1.21.10,<2.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
