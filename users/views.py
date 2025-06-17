@@ -9,10 +9,12 @@ from users.serializers import EmployeeWithTasksSerializer
 class EmployeeViewSet(viewsets.ModelViewSet):
     queryset = Employee.objects.all()
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=["get"])
     def busy(self, request):
         queryset = Employee.objects.annotate(
-            active_tasks_count=Count('tasks', filter=Q(tasks__status__in=['new', 'in_progress']))
-        ).order_by('-active_tasks_count')
+            active_tasks_count=Count(
+                "tasks", filter=Q(tasks__status__in=["new", "in_progress"])
+            )
+        ).order_by("-active_tasks_count")
         serializer = EmployeeWithTasksSerializer(queryset, many=True)
         return Response(serializer.data)

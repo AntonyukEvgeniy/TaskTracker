@@ -1,5 +1,5 @@
 import random
-from datetime import datetime, timedelta
+from datetime import timedelta
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from tasks.models import Task
@@ -7,19 +7,23 @@ from users.models import Employee
 
 
 class Command(BaseCommand):
-    help = 'Заполняет базу данных тестовыми данными'
+    help = "Заполняет базу данных тестовыми данными"
 
     def generate_employees(self, count):
         positions = [
-            "Разработчик", "Тестировщик", "Менеджер проекта", "Аналитик",
-            "Дизайнер", "DevOps инженер", "Системный администратор"
+            "Разработчик",
+            "Тестировщик",
+            "Менеджер проекта",
+            "Аналитик",
+            "Дизайнер",
+            "DevOps инженер",
+            "Системный администратор",
         ]
 
         employees = []
         for i in range(count):
             employee = Employee.objects.create(
-                full_name=f"Сотрудник {i + 1}",
-                position=random.choice(positions)
+                full_name=f"Сотрудник {i + 1}", position=random.choice(positions)
             )
             employees.append(employee)
         return employees
@@ -36,7 +40,7 @@ class Command(BaseCommand):
                 title=f"Задача {i + 1}",
                 assignee=random.choice(employees),
                 deadline=deadline,
-                status=random.choice(statuses)
+                status=random.choice(statuses),
             )
             tasks.append(task)
         # Создаем подзадачи (30% от общего количества)
@@ -45,20 +49,22 @@ class Command(BaseCommand):
             deadline = timezone.now() + timedelta(days=random.randint(1, 60))
             task = Task.objects.create(
                 title=f"Подзадача {i + 1}",
-                parent_task=random.choice(tasks),  # Выбираем случайную родительскую задачу
+                parent_task=random.choice(
+                    tasks
+                ),  # Выбираем случайную родительскую задачу
                 assignee=random.choice(employees),
                 deadline=deadline,
-                status=random.choice(statuses)
+                status=random.choice(statuses),
             )
             tasks.append(task)
         return tasks
 
     def handle(self, *args, **options):
         # Создаем сотрудников
-        self.stdout.write('Создание сотрудников...')
+        self.stdout.write("Создание сотрудников...")
         employees = self.generate_employees(1000)
-        self.stdout.write(f'Создано {len(employees)} сотрудников')
+        self.stdout.write(f"Создано {len(employees)} сотрудников")
         # Создаем задачи
-        self.stdout.write('Создание задач...')
+        self.stdout.write("Создание задач...")
         tasks = self.generate_tasks(10000, employees)
-        self.stdout.write(f'Создано {len(tasks)} задач')
+        self.stdout.write(f"Создано {len(tasks)} задач")
