@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "rest_framework",
-    "drf_yasg"
+    "drf_yasg",
+    "users",
+    "tasks"
 
 ]
 
@@ -56,7 +58,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'TaskTracker.urls'
+ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
