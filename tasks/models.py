@@ -33,6 +33,10 @@ class Task(models.Model):
     class Meta:
         verbose_name = "Задача"
         verbose_name_plural = "Задачи"
+        indexes = [
+            models.Index(fields=['status', 'assignee']),
+            models.Index(fields=['status']),
+        ]
 
     def __str__(self):
         return self.title

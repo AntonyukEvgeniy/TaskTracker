@@ -19,5 +19,5 @@ class EmployeeWithTasksSerializer(serializers.ModelSerializer):
     def get_active_tasks(self, obj):
         return [
             {"id": task.id, "title": task.title, "status": task.status}
-            for task in obj.tasks.filter(status__in=["new", "in_progress"])
+            for task in getattr(obj, 'prefetched_active_tasks', [])
         ]
