@@ -21,6 +21,8 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework.permissions import AllowAny
 
+from config import settings
+
 schema_view = get_schema_view(
     openapi.Info(
         title="API Documentation",
@@ -40,3 +42,9 @@ urlpatterns = [
         name="schema-swagger-ui",
     ),
 ]
+# ✅ Подключаем debug toolbar только в DEBUG-режиме
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns += [
+        path("__debug__/", include(debug_toolbar.urls)),
+    ]

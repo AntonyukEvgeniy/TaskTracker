@@ -9,10 +9,9 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
 from pathlib import Path
-
 from environs import Env
+import socket
 
 env = Env()
 env.read_env()
@@ -29,7 +28,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["127.0.0.1", "localhost"])
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["127.0.0.1", "localhost", "0.0.0.0"])
 
 
 # Application definition
@@ -45,9 +44,11 @@ INSTALLED_APPS = [
     "drf_yasg",
     "users",
     "tasks",
+    "debug_toolbar",
 ]
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -136,3 +137,17 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+
+INTERNAL_IPS = ["127.0.0.1"]
+
+# Поддержка Docker-среды (определение хостового IP)
+try:
+    hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+    for ip in ips:
+        # Заменяем последний октет IP на .1 (шлюз по умолчанию)
+        internal_ip = ".".join(ip.split(".")[:-1] + ["1"])
+        INTERNAL_IPS.append(internal_ip)
+except Exception:
+    pass

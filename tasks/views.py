@@ -12,13 +12,14 @@ class TaskViewSet(viewsets.ModelViewSet):
     """
     ViewSet для работы с задачами
     """
-
-    queryset = Task.objects.all()
     serializer_class = TaskSerializer
-    permission_classes = [AllowAny]
 
     def get_queryset(self):
-        return Task.objects.filter(user=self.request.user)
+        queryset = Task.objects.all()
+        assignee_id = self.request.query_params.get('assignee', None)
+        if assignee_id is not None:
+            queryset = queryset.filter(assignee_id=assignee_id)
+        return queryset
 
     @action(detail=False, methods=["get"])
     def get_important_tasks_and_employees(self):
