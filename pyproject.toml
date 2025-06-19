@@ -17,9 +17,14 @@ dependencies = [
     "drf-yasg (>=1.21.10,<2.0.0)",
     "psycopg2-binary (>=2.9.9,<3.0.0)",
     "poetry-core (>=2.0.0,<3.0.0)",
-    "django-debug-toolbar (>=5.2.0,<6.0.0)"
+    "django-debug-toolbar (>=5.2.0,<6.0.0)",
+    "pytest (>=8.4.1,<9.0.0)",
+    "pytest-cov (>=6.2.1,<7.0.0)"
 ]
-
+[tool.pytest.ini_options]
+testpaths = ["tasks", "users"]
+python_files = ["test_*.py", "*_tests.py"]
+addopts = "--cov=tasks --cov=users --cov-report=term-missing --no-cov-on-fail"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

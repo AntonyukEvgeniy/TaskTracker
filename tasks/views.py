@@ -1,8 +1,8 @@
 from django.db.models import Count, Q
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from tasks import serializers
 from tasks.models import Task
 from tasks.serializers import TaskSerializer
 from users.models import Employee
@@ -21,6 +21,14 @@ class TaskViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(assignee_id=assignee_id)
         return queryset
 
+    def create(self, request, *args, **kwargs):
+        try:
+            return super().create(request, *args, **kwargs)
+        except serializers.ValidationError as e:
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
     @action(detail=False, methods=["get"])
     def get_important_tasks_and_employees(self):
         # Находим важные задачи, которые:
