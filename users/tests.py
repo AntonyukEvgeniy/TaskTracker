@@ -1,9 +1,10 @@
 from django.test import TestCase
-from django.utils import timezone
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework.test import APIClient
-from users.models import Employee
+
 from tasks.models import Task
+from users.models import Employee
 
 
 class EmployeeModelTests(TestCase):

@@ -1,8 +1,10 @@
 from itertools import cycle
+
 from django.db.models import Count, Q
-from rest_framework import viewsets, status
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+
 from tasks import serializers
 from tasks.models import Task
 from tasks.serializers import TaskSerializer

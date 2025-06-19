@@ -1,10 +1,11 @@
-from django.db.models import Count, Q, Prefetch
+from django.db.models import Count, Prefetch, Q
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+
 from tasks.models import Task
 from users.models import Employee
-from users.serializers import EmployeeWithTasksSerializer, EmployeeSerializer
+from users.serializers import EmployeeSerializer, EmployeeWithTasksSerializer
 
 
 class EmployeeViewSet(viewsets.ModelViewSet):
