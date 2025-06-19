@@ -1,27 +1,17 @@
+# Use Python 3.11 slim image
 FROM python:3.11-slim
-
+# Set working directory
 WORKDIR /app
-
-# Установка системных зависимостей (netcat пригодится для ожидания БД)
-RUN apt-get update && apt-get install -y \
-    netcat-traditional \
-    && rm -rf /var/lib/apt/lists/*
-
-# Копируем сначала необходимые для poetry install файлы
-COPY README.md .
-COPY pyproject.toml .
-COPY poetry.lock .
-
-# Установка Poetry и зависимостей
-RUN pip install poetry && \
-    poetry config virtualenvs.create false && \
-    poetry install --no-root --no-interaction --no-ansi
-
-# Копируем остальной код проекта
+# Install poetry
+RUN pip install poetry
+# Copy project files
+COPY pyproject.toml poetry.lock* ./
+# Configure poetry to not create a virtual environment inside container
+RUN poetry config virtualenvs.create false
+# Install dependencies
+RUN poetry install --only main --no-root --no-interaction --no-ansi
+# Copy application code
 COPY . .
-
-# Если используется порт
-EXPOSE 8000
-ENTRYPOINT ["/app/entrypoint.sh"]
-# Команда по умолчанию
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+RUN chmod +x entrypoint.sh
+# Command to run migrations
+CMD ["python", "manage.py", "migrate"]

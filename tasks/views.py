@@ -1,13 +1,15 @@
 from itertools import cycle
 
 from django.db.models import Count, Q
-from rest_framework import status, viewsets
+
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from tasks import serializers
+
 from tasks.models import Task
-from tasks.serializers import TaskSerializer
+from tasks.serializers import TaskSerializer, ImportantTaskSerializer
 from users.models import Employee
 
 
@@ -25,6 +27,10 @@ class TaskViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(assignee_id=assignee_id)
         return queryset
 
+    @swagger_auto_schema(
+        operation_description="Получает список важных задач и предлагаемых исполнителей",
+        responses={200: ImportantTaskSerializer(many=True)},
+    )
     @action(detail=False, methods=["get"])
     def get_important_tasks_and_employees(self, request):
         # Находим важные задачи, которые:
