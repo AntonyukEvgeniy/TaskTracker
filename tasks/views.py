@@ -25,12 +25,6 @@ class TaskViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(assignee_id=assignee_id)
         return queryset
 
-    def create(self, request, *args, **kwargs):
-        try:
-            return super().create(request, *args, **kwargs)
-        except serializers.ValidationError as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
     @action(detail=False, methods=["get"])
     def get_important_tasks_and_employees(self, request):
         # Находим важные задачи, которые:
