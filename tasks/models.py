@@ -22,6 +22,8 @@ class Task(models.Model):
         verbose_name="Исполнитель",
         on_delete=models.PROTECT,
         related_name="tasks",
+        null=True,
+        blank=True,
     )
     deadline = models.DateTimeField("Срок выполнения")
     status = models.CharField(
@@ -33,6 +35,7 @@ class Task(models.Model):
     class Meta:
         verbose_name = "Задача"
         verbose_name_plural = "Задачи"
+        app_label = 'tasks'
         indexes = [
             models.Index(fields=['status', 'assignee']),
             models.Index(fields=['status']),

@@ -5,19 +5,29 @@ from rest_framework.test import APIClient
 
 from tasks.models import Task
 from tasks.management.commands.populate_db import Command
+from tasks.serializers import TaskSerializer
 from users.models import Employee
 
 
 class TaskModelTests(TestCase):
-    def test_str_representation(self):
-        employee = Employee.objects.create(full_name="John Doe", position="Dev")
-        task = Task.objects.create(
-            title="My Task", assignee=employee, deadline=timezone.now()
+    def setUp(self):
+        self.employee = Employee.objects.create(
+            full_name="John Doe",
+            position="Dev"
         )
-        self.assertEqual(str(task), "My Task")
+        self.task = Task.objects.create(
+            title="My Task",
+            assignee=self.employee,
+            deadline=timezone.now()
+        )
+
+    def test_str_representation(self):
+        self.assertEqual(str(self.task), "My Task")
 
 
 class PopulateDBCommandTests(TestCase):
+    def setUp(self):
+        self.cmd = Command()
     def test_generate_methods(self):
         cmd = Command()
         employees = cmd.generate_employees(2)

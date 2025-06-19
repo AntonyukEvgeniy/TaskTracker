@@ -141,7 +141,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 INTERNAL_IPS = ["127.0.0.1"]
-
+SWAGGER_USE_COMPAT_RENDERERS = False
 # Поддержка Docker-среды (определение хостового IP)
 try:
     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())

@@ -19,12 +19,15 @@ dependencies = [
     "poetry-core (>=2.0.0,<3.0.0)",
     "django-debug-toolbar (>=5.2.0,<6.0.0)",
     "pytest (>=8.4.1,<9.0.0)",
-    "pytest-cov (>=6.2.1,<7.0.0)"
+    "pytest-cov (>=6.2.1,<7.0.0)",
+    "pytest-django (>=4.11.1,<5.0.0)"
 ]
+
 [tool.pytest.ini_options]
 testpaths = ["tasks", "users"]
 python_files = ["test_*.py", "*_tests.py"]
 addopts = "--cov=tasks --cov=users --cov-report=term-missing --no-cov-on-fail"
+django_settings_module = "config.settings_test"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

@@ -30,7 +30,7 @@ class TaskViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
     @action(detail=False, methods=["get"])
-    def get_important_tasks_and_employees(self):
+    def get_important_tasks_and_employees(self, request):
         # Находим важные задачи, которые:
         # 1. Не назначены
         # 2. Имеют родительские задачи в работе
