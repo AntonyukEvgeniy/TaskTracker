@@ -43,28 +43,63 @@ class Command(BaseCommand):
                 status=random.choice(statuses),
             )
             tasks.append(task)
+
         # Создаем подзадачи (30% от общего количества)
         subtasks_count = count - root_tasks_count
         for i in range(subtasks_count):
             deadline = timezone.now() + timedelta(days=random.randint(1, 60))
             task = Task.objects.create(
                 title=f"Подзадача {i + 1}",
-                parent_task=random.choice(
-                    tasks
-                ),  # Выбираем случайную родительскую задачу
+                parent_task=random.choice(tasks),
                 assignee=random.choice(employees),
                 deadline=deadline,
                 status=random.choice(statuses),
             )
             tasks.append(task)
+
+        return tasks
+
+    def generate_important_tasks(self, count):
+        """
+        Создает специальные подзадачи с assignee=None и parent_task в статусе IN_PROGRESS
+        """
+        # Найти родительские задачи в статусе IN_PROGRESS
+        in_progress_parents = Task.objects.filter(
+            parent_task__isnull=True,
+            status=Task.Status.IN_PROGRESS
+        )
+
+        if not in_progress_parents.exists():
+            # Если таких нет, создадим одну родительскую задачу вручную
+            parent = Task.objects.create(
+                title="Родительская задача для важных задач",
+                status=Task.Status.IN_PROGRESS,
+                deadline=timezone.now() + timedelta(days=30),
+                assignee=None
+            )
+            in_progress_parents = [parent]
+        tasks = []
+        for i in range(count):
+            task = Task.objects.create(
+                title=f"Важная подзадача {i + 1}",
+                parent_task=random.choice(in_progress_parents),
+                assignee=None,
+                deadline=timezone.now() + timedelta(days=random.randint(1, 30)),
+                status=Task.Status.NEW
+            )
+            tasks.append(task)
         return tasks
 
     def handle(self, *args, **options):
-        # Создаем сотрудников
-        self.stdout.write("Создание сотрудников...")
+        """
+        Заполняет базу данных тестовыми данными:
+        - 1000 сотрудников
+        - 10000 задач
+        - 50 важных подзадач
+        """
         employees = self.generate_employees(1000)
-        self.stdout.write(f"Создано {len(employees)} сотрудников")
-        # Создаем задачи
-        self.stdout.write("Создание задач...")
         tasks = self.generate_tasks(10000, employees)
-        self.stdout.write(f"Создано {len(tasks)} задач")
+        important_tasks = self.generate_important_tasks(50)
+        self.stdout.write(self.style.SUCCESS('База данных успешно заполнена тестовыми данными'))
+
+

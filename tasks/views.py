@@ -29,6 +29,7 @@ class TaskViewSet(viewsets.ModelViewSet):
                 {'error': str(e)},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
     @action(detail=False, methods=["get"])
     def get_important_tasks_and_employees(self, request):
         # Находим важные задачи, которые:
@@ -37,13 +38,14 @@ class TaskViewSet(viewsets.ModelViewSet):
         important_tasks = Task.objects.filter(
             assignee__isnull=True, parent_task__status=Task.Status.IN_PROGRESS
         ).order_by("deadline")
+
         # Находим наименее загруженных сотрудников
-        # (считаем только задачи в статусе "В работе")
         employees = Employee.objects.annotate(
             active_tasks_count=Count(
                 "tasks", filter=Q(tasks__status=Task.Status.IN_PROGRESS)
             )
         ).order_by("active_tasks_count")
+
         # Формируем результат
         result = []
         for task in important_tasks:
@@ -52,7 +54,8 @@ class TaskViewSet(viewsets.ModelViewSet):
                     {
                         "task": task.title,
                         "deadline": task.deadline,
-                        "suggested_employee": employees[0].full_name,
+                        "suggested_employees": [employees[0].full_name]
                     }
                 )
         return Response(result)
+
