@@ -1,3 +1,4 @@
+from itertools import cycle
 from django.db.models import Count, Q
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
@@ -40,22 +41,19 @@ class TaskViewSet(viewsets.ModelViewSet):
         ).order_by("deadline")
 
         # Находим наименее загруженных сотрудников
-        employees = Employee.objects.annotate(
-            active_tasks_count=Count(
-                "tasks", filter=Q(tasks__status=Task.Status.IN_PROGRESS)
-            )
-        ).order_by("active_tasks_count")
+        employees = list(Employee.objects.annotate(
+            active_tasks_count=Count("tasks", filter=Q(tasks__status=Task.Status.IN_PROGRESS))
+        ).order_by("active_tasks_count"))
 
-        # Формируем результат
+        employee_cycle = cycle(employees)  # бесконечный итератор
+
         result = []
         for task in important_tasks:
-            if employees:
-                result.append(
-                    {
-                        "task": task.title,
-                        "deadline": task.deadline,
-                        "suggested_employees": [employees[0].full_name]
-                    }
-                )
+            employee = next(employee_cycle)
+            result.append({
+                "task": task.title,
+                "deadline": task.deadline,
+                "suggested_employees": [employee.full_name]
+            })
         return Response(result)
 
