@@ -65,8 +65,7 @@ class Command(BaseCommand):
         """
         # Найти родительские задачи в статусе IN_PROGRESS
         in_progress_parents = Task.objects.filter(
-            parent_task__isnull=True,
-            status=Task.Status.IN_PROGRESS
+            parent_task__isnull=True, status=Task.Status.IN_PROGRESS
         )
 
         if not in_progress_parents.exists():
@@ -75,7 +74,7 @@ class Command(BaseCommand):
                 title="Родительская задача для важных задач",
                 status=Task.Status.IN_PROGRESS,
                 deadline=timezone.now() + timedelta(days=30),
-                assignee=None
+                assignee=None,
             )
             in_progress_parents = [parent]
         tasks = []
@@ -85,7 +84,7 @@ class Command(BaseCommand):
                 parent_task=random.choice(in_progress_parents),
                 assignee=None,
                 deadline=timezone.now() + timedelta(days=random.randint(1, 30)),
-                status=Task.Status.NEW
+                status=Task.Status.NEW,
             )
             tasks.append(task)
         return tasks
@@ -98,8 +97,8 @@ class Command(BaseCommand):
         - 50 важных подзадач
         """
         employees = self.generate_employees(1000)
-        tasks = self.generate_tasks(10000, employees)
-        important_tasks = self.generate_important_tasks(50)
-        self.stdout.write(self.style.SUCCESS('База данных успешно заполнена тестовыми данными'))
-
-
+        self.generate_tasks(10000, employees)
+        self.generate_important_tasks(50)
+        self.stdout.write(
+            self.style.SUCCESS("База данных успешно заполнена тестовыми данными")
+        )

@@ -13,11 +13,12 @@ class TaskViewSet(viewsets.ModelViewSet):
     """
     ViewSet для работы с задачами
     """
+
     serializer_class = TaskSerializer
 
     def get_queryset(self):
         queryset = Task.objects.all()
-        assignee_id = self.request.query_params.get('assignee', None)
+        assignee_id = self.request.query_params.get("assignee", None)
         if assignee_id is not None:
             queryset = queryset.filter(assignee_id=assignee_id)
         return queryset
@@ -26,10 +27,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         try:
             return super().create(request, *args, **kwargs)
         except serializers.ValidationError as e:
-            return Response(
-                {'error': str(e)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["get"])
     def get_important_tasks_and_employees(self, request):
@@ -41,19 +39,24 @@ class TaskViewSet(viewsets.ModelViewSet):
         ).order_by("deadline")
 
         # Находим наименее загруженных сотрудников
-        employees = list(Employee.objects.annotate(
-            active_tasks_count=Count("tasks", filter=Q(tasks__status=Task.Status.IN_PROGRESS))
-        ).order_by("active_tasks_count"))
+        employees = list(
+            Employee.objects.annotate(
+                active_tasks_count=Count(
+                    "tasks", filter=Q(tasks__status=Task.Status.IN_PROGRESS)
+                )
+            ).order_by("active_tasks_count")
+        )
 
         employee_cycle = cycle(employees)  # бесконечный итератор
 
         result = []
         for task in important_tasks:
             employee = next(employee_cycle)
-            result.append({
-                "task": task.title,
-                "deadline": task.deadline,
-                "suggested_employees": [employee.full_name]
-            })
+            result.append(
+                {
+                    "task": task.title,
+                    "deadline": task.deadline,
+                    "suggested_employees": [employee.full_name],
+                }
+            )
         return Response(result)
-

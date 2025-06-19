@@ -2,18 +2,16 @@ from django.test import TestCase
 from django.utils import timezone
 from django.urls import reverse
 from rest_framework.test import APIClient
-
 from users.models import Employee
 from tasks.models import Task
-from users.serializers import EmployeeSerializer
 
 
 class EmployeeModelTests(TestCase):
     def setUp(self):
         self.employee = Employee.objects.create(
-            full_name="Антонюк Евгений",
-            position="QA"
+            full_name="Антонюк Евгений", position="QA"
         )
+
     def test_str_representation(self):
         employee = Employee.objects.create(full_name="Антонюк Евгений", position="QA")
         self.assertEqual(str(employee), "Антонюк Евгений")
@@ -52,4 +50,3 @@ class EmployeeViewSetTests(TestCase):
         self.assertEqual(data[0]["id"], self.emp1.id)
         self.assertEqual(data[0]["active_tasks_count"], 2)
         self.assertEqual(len(data[0]["active_tasks"]), 2)
-

@@ -10,7 +10,7 @@ class Employee(models.Model):
     class Meta:
         verbose_name = "Сотрудник"
         verbose_name_plural = "Сотрудники"
-        app_label = 'users'
+        app_label = "users"
 
     def __str__(self):
         return self.full_name

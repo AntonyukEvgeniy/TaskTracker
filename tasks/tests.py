@@ -2,23 +2,16 @@ from django.test import TestCase
 from django.utils import timezone
 from django.urls import reverse
 from rest_framework.test import APIClient
-
 from tasks.models import Task
 from tasks.management.commands.populate_db import Command
-from tasks.serializers import TaskSerializer
 from users.models import Employee
 
 
 class TaskModelTests(TestCase):
     def setUp(self):
-        self.employee = Employee.objects.create(
-            full_name="John Doe",
-            position="Dev"
-        )
+        self.employee = Employee.objects.create(full_name="John Doe", position="Dev")
         self.task = Task.objects.create(
-            title="My Task",
-            assignee=self.employee,
-            deadline=timezone.now()
+            title="My Task", assignee=self.employee, deadline=timezone.now()
         )
 
     def test_str_representation(self):
@@ -28,6 +21,7 @@ class TaskModelTests(TestCase):
 class PopulateDBCommandTests(TestCase):
     def setUp(self):
         self.cmd = Command()
+
     def test_generate_methods(self):
         cmd = Command()
         employees = cmd.generate_employees(2)
