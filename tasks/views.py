@@ -39,7 +39,6 @@ class TaskViewSet(viewsets.ModelViewSet):
         important_tasks = Task.objects.filter(
             assignee__isnull=True, parent_task__status=Task.Status.IN_PROGRESS
         ).order_by("deadline")
-
         # Находим наименее загруженных сотрудников
         employees = list(
             Employee.objects.annotate(
@@ -48,17 +47,24 @@ class TaskViewSet(viewsets.ModelViewSet):
                 )
             ).order_by("active_tasks_count")
         )
-
-        employee_cycle = cycle(employees)  # бесконечный итератор
-
         result = []
         for task in important_tasks:
-            employee = next(employee_cycle)
-            result.append(
+            # Для каждой задачи создаем список предлагаемых сотрудников через цикличный итератор
+            suggested_employees = [
                 {
-                    "task": task.title,
-                    "deadline": task.deadline,
-                    "suggested_employees": [employee.full_name],
+                    "id": emp.id,
+                    "full_name": emp.full_name,
+                    "position": emp.position,
+                    "active_tasks_count": emp.active_tasks_count
                 }
-            )
-        return Response(result)
+                for emp in employees[:3]  # Берем только 3-х наименее загруженных
+            ]
+
+            result.append({
+                "title": task.title,
+                "deadline": task.deadline,
+                "suggested_employees": suggested_employees
+            })
+        serializer = ImportantTaskSerializer(data=result, many=True)
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.data)
