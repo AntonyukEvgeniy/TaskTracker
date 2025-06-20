@@ -1,23 +1,36 @@
 [project]
 name = "tasktracker"
 version = "0.1.0"
-description = ""
+description = "Task Management System with REST API"
 authors = [
     {name = "AntonyukEvgeniy",email = "evgeniiantonyuk@gmail.com"}
 ]
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.11,<4.0"
 dependencies = [
     "django (>=5.2.2,<6.0.0)",
     "djangorestframework (>=3.16.0,<4.0.0)",
     "environs (>=14.2.0,<15.0.0)",
-    "black (>=25.1.0,<26.0.0)",
-    "flake8 (>=7.2.0,<8.0.0)",
-    "isort (>=6.0.1,<7.0.0)",
-    "drf-yasg (>=1.21.10,<2.0.0)"
+    "drf-yasg (>=1.21.10,<2.0.0)",
+    "psycopg2-binary (>=2.9.9,<3.0.0)",
+    "poetry-core (>=2.0.0,<3.0.0)",
+    "django-debug-toolbar (>=5.2.0,<6.0.0)",
 ]
 
+[tool.poetry.group.dev.dependencies]
+black = ">=25.1.0,<26.0.0"
+flake8 = ">=7.2.0,<8.0.0"
+isort = ">=6.0.1,<7.0.0"
+[tool.poetry.group.test.dependencies]
+pytest = ">=8.4.1,<9.0.0"
+pytest-cov = ">=6.2.1,<7.0.0"
+pytest-django = ">=4.11.1,<5.0.0"
 
+[tool.pytest.ini_options]
+testpaths = ["tasks", "users"]
+python_files = ["test_*.py", "*_tests.py"]
+addopts = "--cov=tasks --cov=users --cov-report=term-missing --no-cov-on-fail"
+django_settings_module = "config.settings_test"
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"

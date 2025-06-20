@@ -1,0 +1,11 @@
+# Игнорировать всё
+**
+
+# Разрешить эти директории и файлы:
+!config/
+!tasks/
+!users/
+!manage.py
+!poetry.lock
+!pyproject.toml
+!entrypoint.sh

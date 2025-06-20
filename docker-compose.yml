@@ -1,0 +1,62 @@
+services:
+  db:
+    image: postgres:15.1-alpine
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${DATABASE_NAME}
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_PORT=${DATABASE_PORT:-5432}
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "task_tracker"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - backend
+
+  run_migrations:
+    build: .
+    command: python /app/manage.py migrate --noinput
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    environment:
+      - DATABASE_HOST=db
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - backend
+  web:
+    build: .
+    entrypoint: ./entrypoint.sh
+    command: python /app/manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - DATABASE_HOST=db
+      - DEBUG=1
+    depends_on:
+      db:
+        condition: service_healthy
+      run_migrations:
+        condition: service_completed_successfully
+    networks:
+      - backend
+
+volumes:
+  postgres:
+
+networks:
+  backend:
+    driver: bridge
