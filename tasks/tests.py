@@ -64,5 +64,5 @@ class TaskViewSetTests(TestCase):
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertEqual(len(data), 1)
-        self.assertEqual(data[0]["task"], self.important.title)
+        self.assertEqual(data[0]["title"], self.important.title)
         self.assertIn("suggested_employees", data[0])

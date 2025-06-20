@@ -49,7 +49,6 @@ class TaskViewSet(viewsets.ModelViewSet):
         )
         result = []
         for task in important_tasks:
-            # Для каждой задачи создаем список предлагаемых сотрудников через цикличный итератор
             suggested_employees = [
                 {
                     "id": emp.id,

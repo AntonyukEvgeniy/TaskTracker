@@ -30,7 +30,6 @@ class EmployeeViewSet(viewsets.ModelViewSet):
                 Prefetch(
                     "tasks",
                     queryset=Task.objects.filter(status__in=active_statuses)
-                    .select_related("assignee")
                     .only("id", "title", "status", "assignee_id"),
                     to_attr="prefetched_active_tasks",
                 )
